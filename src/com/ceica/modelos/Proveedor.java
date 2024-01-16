@@ -62,7 +62,7 @@ public class Proveedor {
 
     @Override
     public String toString() {
-        return "Proveedor{" +
+        return "\nProveedor{" +
                 "ID=" + id +
                 ", Nombre='" + nombre + '\'' +
                 ", CIF='" + cif + '\'' +

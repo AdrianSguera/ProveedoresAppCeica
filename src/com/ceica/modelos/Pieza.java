@@ -57,11 +57,11 @@ public class Pieza {
 
     @Override
     public String toString() {
-        return "Pieza{" +
+        return "\nPieza{" +
                 "ID=" + id +
                 ", Nombre='" + nombre + '\'' +
                 ", Color='" + color + '\'' +
-                ", Categoria='" + categoria + '\'' +
+                ", Categoría='" + categoria + '\'' +
                 ", Precio=" + precio +
                 '}';
     }
