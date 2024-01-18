@@ -1,17 +1,20 @@
 package com.ceica.modelos;
 
 public class Pieza {
+    private static int idPieza = 0;
     private int id;
     private String nombre, color;
     private Double precio;
     private Categoria categoria;
 
     public Pieza() {
+        this.id = idPieza++;
     }
 
-    public Pieza(String nombre, String color, Double precio) {
+    public Pieza(String nombre, Color color, Double precio) {
+        this.id = idPieza++;
         this.nombre = nombre;
-        this.color = color;
+        this.color = color.toString();
         this.precio = precio;
     }
 

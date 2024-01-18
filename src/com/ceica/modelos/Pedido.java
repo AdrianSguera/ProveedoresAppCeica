@@ -3,15 +3,18 @@ package com.ceica.modelos;
 import java.time.LocalDate;
 
 public class Pedido {
+    private static int idPedido = 0;
     private int id, cantidad;
     private Proveedor proveedor;
     private Pieza pieza;
     private LocalDate fecha;
 
     public Pedido() {
+        this.id = idPedido++;
     }
 
     public Pedido(Proveedor proveedor, Pieza pieza) {
+        this.id = idPedido++;
         this.proveedor = proveedor;
         this.pieza = pieza;
     }

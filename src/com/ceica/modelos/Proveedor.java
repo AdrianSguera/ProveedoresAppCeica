@@ -1,13 +1,16 @@
 package com.ceica.modelos;
 
 public class Proveedor {
+    private static int idProveedor = 0;
     private int id;
     private String nombre, cif, direccion, localidad, provincia;
 
     public Proveedor() {
+        this.id = idProveedor++;
     }
 
     public Proveedor(String nombre, String cif) {
+        this.id = idProveedor++;
         this.nombre = nombre;
         this.cif = cif;
     }

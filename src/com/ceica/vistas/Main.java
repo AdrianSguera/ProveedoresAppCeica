@@ -1,17 +1,19 @@
 package com.ceica.vistas;
 
 import com.ceica.controladores.AlmacenController;
-import com.ceica.modelos.Categoria;
+import com.ceica.modelos.Color;
+import com.ceica.modelos.Pedido;
 import com.ceica.modelos.Pieza;
 import com.ceica.modelos.Proveedor;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         AlmacenController almacenController = new AlmacenController();
         Scanner leer = new Scanner(System.in);
-        String op;
+        int op;
         do {
             System.out.println("""
                     Elija una opción:
@@ -23,10 +25,13 @@ public class Main {
                     6: Eliminar pieza
                     7: Nuevo pedido
                     8: Mostrar información del almacén
+                    9: Pedidos por pieza
+                    10: Pedidos por proveedor
                     11: Salir""");
-            op = leer.nextLine();
+            op = leer.nextInt();
+            leer.nextLine();
             switch (op){
-                case "1":
+                case 1:
                     System.out.println("""
                             -------------------------------------
                                        Nuevo proveedor
@@ -34,9 +39,9 @@ public class Main {
                     if (nuevoProveedor(leer, almacenController))
                         System.out.println("Operación realizada\n");
                     else
-                        System.out.println("No se pudo realizar la operación");
+                        System.out.println("No se pudo realizar la operación\n");
                     break;
-                case "2":
+                case 2:
                     System.out.println("""
                             -------------------------------------
                                       Modificar proveedor
@@ -44,9 +49,9 @@ public class Main {
                     if (modificarDatosProveedor(leer,almacenController))
                         System.out.println("Operación realizada\n");
                     else
-                        System.out.println("No se pudo realizar la operación");
+                        System.out.println("No se pudo realizar la operación\n");
                     break;
-                case "3":
+                case 3:
                     System.out.println("""
                             -------------------------------------
                                       Eliminar proveedor
@@ -54,9 +59,9 @@ public class Main {
                     if (borrarProveedor(leer,almacenController))
                         System.out.println("Operación realizada\n");
                     else
-                        System.out.println("No se pudo realizar la operación");
+                        System.out.println("No se pudo realizar la operación\n");
                     break;
-                case "4":
+                case 4:
                     System.out.println("""
                             -------------------------------------
                                          Nueva pieza
@@ -64,19 +69,19 @@ public class Main {
                     if (nuevaPieza(leer,almacenController))
                         System.out.println("Operación realizada\n");
                     else
-                        System.out.println("No se pudo realizar la operación");
+                        System.out.println("No se pudo realizar la operación\n");
                     break;
-                case "5":
+                case 5:
                     System.out.println("""
                             -------------------------------------
-                                       Modificar pieza
+                                    Modificar precio pieza
                             -------------------------------------""");
-                    if (modificarDatosPieza(leer,almacenController))
+                    if (modificarPrecioPieza(leer,almacenController))
                         System.out.println("Operación realizada\n");
                     else
-                        System.out.println("No se pudo realizar la operación");
+                        System.out.println("No se pudo realizar la operación\n");
                     break;
-                case "6":
+                case 6:
                     System.out.println("""
                             -------------------------------------
                                        Eliminar pieza
@@ -84,26 +89,37 @@ public class Main {
                     if (borrarPieza(leer,almacenController))
                         System.out.println("Operación realizada\n");
                     else
-                        System.out.println("No se pudo realizar la operación");
+                        System.out.println("No se pudo realizar la operación\n");
                     break;
-                case "7":
+                case 7:
                     System.out.println("""
                             -------------------------------------
                                         Nuevo pedido
                             -------------------------------------""");
-                    if (nuevoPedido(leer,almacenController))
-                        System.out.println("Operación realizada\n");
-                    else
-                        System.out.println("No se pudo realizar la operación");
+                    System.out.println(nuevoPedido(leer,almacenController) + "\n");
                     break;
-                case "8":
+                case 8:
                     System.out.println("""
                             -------------------------------------
                                 Mostrar información del almacén
                             -------------------------------------""");
                     System.out.println(almacenController.toString() + "\n");
                     break;
-                case "11":
+                case 9:
+                    System.out.println("""
+                            -------------------------------------
+                                      Pedidos por pieza
+                            -------------------------------------""");
+                    System.out.println(getPedidosByPieza(leer,almacenController));
+                    break;
+                case 10:
+                    System.out.println("""
+                            -------------------------------------
+                                     Pedidos por proveedor
+                            -------------------------------------""");
+                    System.out.println(getPedidosByProveedor(leer,almacenController));
+                    break;
+                case 11:
                     System.out.println("""
                             -------------------------------------
                                        Fin del programa
@@ -113,29 +129,32 @@ public class Main {
                     System.out.println("Opción incorrecta\n");
                     break;
             }
-        } while (!op.equals("11"));
+        } while (op != 11);
     }
 
-    private static boolean nuevoPedido(Scanner leer, AlmacenController almacenController) {
+    private static String getPedidosByProveedor(Scanner leer, AlmacenController almacenController) {
+        System.out.println("Ingrese cif del proveedor");
+        String cif = leer.nextLine();
+        return almacenController.getPedidosByProveedor(cif);
+    }
+
+    private static String getPedidosByPieza(Scanner leer, AlmacenController almacenController) {
+        System.out.println("Ingrese id de la pieza");
+        int id = leer.nextInt();
+        leer.nextLine();
+        return almacenController.getPedidosByPieza(id);
+    }
+
+    private static String nuevoPedido(Scanner leer, AlmacenController almacenController) {
         System.out.println("Ingrese CIF del proveedor");
         String cif = leer.nextLine();
-        if (almacenController.existeCif(cif)){
-            System.out.println("Ingrese id de la pieza");
-            int idpieza = leer.nextInt();
-            leer.nextLine();
-            if (almacenController.existeID(idpieza)){
-                System.out.println("Ingrese id");
-                int id = leer.nextInt();
-                leer.nextLine();
-                System.out.println("Ingrese cantidad");
-                int cantidad = leer.nextInt();
-                leer.nextLine();
-                System.out.println("Ingrese fecha (dd-mm-yyyy");
-                String fecha = leer.nextLine();
-                return almacenController.nuevoPedido(id, cantidad, cif, idpieza, fecha);
-            }
-        }
-        return false;
+        System.out.println("Ingrese id de la pieza");
+        int idpieza = leer.nextInt();
+        leer.nextLine();
+        System.out.println("Ingrese cantidad");
+        int cantidad = leer.nextInt();
+        leer.nextLine();
+        return almacenController.nuevoPedido(cantidad, cif, idpieza);
     }
 
     private static boolean borrarPieza(Scanner leer, AlmacenController almacenController) {
@@ -144,69 +163,72 @@ public class Main {
         return almacenController.borrarPieza(id);
     }
 
-    private static boolean modificarDatosPieza(Scanner leer, AlmacenController almacenController) {
+    private static boolean modificarPrecioPieza(Scanner leer, AlmacenController almacenController) {
         System.out.println("Ingrese id de la pieza a modificar");
         int id = leer.nextInt();
         leer.nextLine();
-        if(almacenController.existeID(id)){
-            System.out.println("""
-                Ingrese el dato a modificar:
-                1: Nombre
-                2: Color
-                3: Precio
-                4: Categoría
-                """);
-            int op = leer.nextInt();
+        if (almacenController.existeId(id)) {
+            System.out.println("Ingrese el nuevo precio");
+            Double precio = leer.nextDouble();
             leer.nextLine();
-            switch (op){
-                case 1:
-                    System.out.println("Ingrese el nuevo nombre");
-                    String nombre = leer.nextLine();
-                    return almacenController.modificarNombrePieza(id,nombre);
-                case 2:
-                    System.out.println("Ingrese el nuevo color");
-                    String color = leer.nextLine();
-                    return almacenController.modificarColorPieza(id, color);
-                case 3:
-                    System.out.println("Ingrese el nuevo precio");
-                    Double precio = leer.nextDouble();
-                    leer.nextLine();
-                    return almacenController.modificarPrecioPieza(id, precio);
-                case 4:
-                    System.out.println("Ingrese nuevo id de categoría");
-                    int idcategoria = leer.nextInt();
-                    leer.nextLine();
-                    System.out.println("Ingrese nuevo nombre de categoría");
-                    String nomcategoria = leer.nextLine();
-                    Categoria categoria = new Categoria(idcategoria,nomcategoria);
-                    return almacenController.modificarCategoriaPieza(idcategoria, categoria);
-                default:
-                    System.out.println("Opción incorrecta");
-                    return false;
-            }
-        }else
-            System.out.println("No existe el id de categoría");
+            return almacenController.modificarPrecioPieza(id, precio);
+        } else
+            System.out.println("No existe el id");
         return false;
     }
 
     private static boolean nuevaPieza(Scanner leer, AlmacenController almacenController) {
-        System.out.println("Ingrese id");
-        int id = leer.nextInt();
-        leer.nextLine();
+        Color color = Color.NEGRO;
         System.out.println("Ingrese nombre");
         String nombre = leer.nextLine();
-        System.out.println("Ingrese color");
-        String color = leer.nextLine();
+        System.out.println("""
+                Ingrese color
+                1:ROJO
+                2:VERDE
+                3:AMARILLO
+                4:NEGRO
+                5:BLANCO
+                6:VIOLETA
+                7:AZUL
+                """);
+        String op = leer.nextLine();
+        switch (op){
+            case "1":
+                color = Color.ROJO;
+                break;
+            case "2":
+                color = Color.VERDE;
+                break;
+            case "3":
+                color = Color.AMARILLO;
+                break;
+            case "4":
+                color = Color.NEGRO;
+                break;
+            case "5":
+                color = Color.BLANCO;
+                break;
+            case "6":
+                color = Color.VIOLETA;
+                break;
+            case "7":
+                color = Color.AZUL;
+                break;
+            default:
+                System.out.println("Opción incorrecta\n");
+                break;
+        }
         System.out.println("Ingrese precio");
         Double precio = leer.nextDouble();
         leer.nextLine();
-        System.out.println("Ingrese id de la categoría");
+        System.out.println("""
+        Ingrese id de la categoría
+        1: Pequeño
+        2: Mediano
+        3: Grande""");
         int idcategoria = leer.nextInt();
         leer.nextLine();
-        System.out.println("Ingrese nombre de la categoría");
-        String nomcategoria = leer.nextLine();
-        Categoria categoria = new Categoria(idcategoria, nomcategoria);
-        return almacenController.nuevaPieza(id, nombre, color ,precio, categoria);
+        return almacenController.nuevaPieza(nombre, color ,precio, idcategoria);
     }
 
     private static boolean borrarProveedor(Scanner leer, AlmacenController almacenController) {
