@@ -2,17 +2,33 @@ package com.ceica.vistas;
 
 import com.ceica.controladores.AlmacenController;
 import com.ceica.modelos.Color;
-import com.ceica.modelos.Pedido;
-import com.ceica.modelos.Pieza;
-import com.ceica.modelos.Proveedor;
 
-import java.util.List;
 import java.util.Scanner;
+
+import static com.ceica.controladores.LoginController.login;
 
 public class Main {
     public static void main(String[] args) {
         AlmacenController almacenController = new AlmacenController();
         Scanner leer = new Scanner(System.in);
+        System.out.println("""
+        ACADEMIA© app
+        ......Presione enter para continuar.....""");
+        leer.nextLine();
+        do {
+            System.out.println("Ingrese usuario");
+            String usuario = leer.nextLine();
+            System.out.println("Ingrese contraseña");
+            String contrasenia = leer.nextLine();
+            if (login(usuario,contrasenia))
+                menuPrincipalAlmacen(leer,almacenController);
+            else
+                System.out.println("Usuario o contraseña incorrectos\n");
+        } while (true);
+
+    }
+
+    private static void menuPrincipalAlmacen(Scanner leer, AlmacenController almacenController) {
         int op;
         do {
             System.out.println("""
@@ -27,7 +43,7 @@ public class Main {
                     8: Mostrar información del almacén
                     9: Pedidos por pieza
                     10: Pedidos por proveedor
-                    11: Salir""");
+                    11: Cerrar sesión""");
             op = leer.nextInt();
             leer.nextLine();
             switch (op){
@@ -122,7 +138,7 @@ public class Main {
                 case 11:
                     System.out.println("""
                             -------------------------------------
-                                       Fin del programa
+                                       Sesión cerrada
                             -------------------------------------""");
                     break;
                 default:
