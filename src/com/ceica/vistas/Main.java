@@ -33,119 +33,131 @@ public class Main {
         do {
             System.out.println("""
                     Elija una opción:
-                    1: Nuevo proveedor
-                    2: Modificar datos proveedor
-                    3: Eliminar proveedor
-                    4: Nueva pieza
-                    5: Modificar datos pieza
-                    6: Eliminar pieza
-                    7: Nuevo pedido
-                    8: Mostrar información del almacén
-                    9: Pedidos por pieza
-                    10: Pedidos por proveedor
-                    11: Cerrar sesión""");
+                    1: Proveedores
+                    2: Piezas
+                    3: Pedidos
+                    4: Cerrar sesión""");
             op = leer.nextInt();
             leer.nextLine();
-            switch (op){
+            switch (op) {
                 case 1:
-                    System.out.println("""
-                            -------------------------------------
-                                       Nuevo proveedor
-                            -------------------------------------""");
-                    if (nuevoProveedor(leer, almacenController))
-                        System.out.println("Operación realizada\n");
-                    else
-                        System.out.println("No se pudo realizar la operación\n");
+                    subMenuProveedor(leer, almacenController);
                     break;
                 case 2:
-                    System.out.println("""
-                            -------------------------------------
-                                      Modificar proveedor
-                            -------------------------------------""");
-                    if (modificarDatosProveedor(leer,almacenController))
-                        System.out.println("Operación realizada\n");
-                    else
-                        System.out.println("No se pudo realizar la operación\n");
+                    subMenuPiezas(leer, almacenController);
                     break;
                 case 3:
-                    System.out.println("""
-                            -------------------------------------
-                                      Eliminar proveedor
-                            -------------------------------------""");
-                    if (borrarProveedor(leer,almacenController))
-                        System.out.println("Operación realizada\n");
-                    else
-                        System.out.println("No se pudo realizar la operación\n");
+                    subMenuPedidos(leer, almacenController);
                     break;
                 case 4:
                     System.out.println("""
                             -------------------------------------
-                                         Nueva pieza
+                                        Sesión cerrada
                             -------------------------------------""");
-                    if (nuevaPieza(leer,almacenController))
-                        System.out.println("Operación realizada\n");
-                    else
-                        System.out.println("No se pudo realizar la operación\n");
                     break;
-                case 5:
+            }
+        } while (op != 4);
+    }
+
+    private static void subMenuPedidos(Scanner leer, AlmacenController almacenController) {
+        int op;
+        System.out.println("""
+                -------------------------------------
+                               Piezas
+                -------------------------------------""");
+        System.out.println("""
+                Elija una opción:
+                1: Nuevo pedido
+                2: Pedidos por pieza
+                3: Pedidos por proveedor
+                4: Información del almacén""");
+        op = leer.nextInt();
+        leer.nextLine();
+        switch (op) {
+            case 1:
+                System.out.println("""
+                        -------------------------------------
+                                    Nuevo pedido
+                        -------------------------------------""");
+                System.out.println(nuevoPedido(leer, almacenController) + "\n");
+                break;
+            case 2:
                     System.out.println("""
                             -------------------------------------
-                                    Modificar precio pieza
+                                      Pedidos por pieza
                             -------------------------------------""");
-                    if (modificarPrecioPieza(leer,almacenController))
-                        System.out.println("Operación realizada\n");
-                    else
-                        System.out.println("No se pudo realizar la operación\n");
+                System.out.println(getPedidosByPieza(leer, almacenController));
                     break;
-                case 6:
-                    System.out.println("""
-                            -------------------------------------
-                                       Eliminar pieza
-                            -------------------------------------""");
-                    if (borrarPieza(leer,almacenController))
-                        System.out.println("Operación realizada\n");
-                    else
-                        System.out.println("No se pudo realizar la operación\n");
-                    break;
-                case 7:
-                    System.out.println("""
-                            -------------------------------------
-                                        Nuevo pedido
-                            -------------------------------------""");
-                    System.out.println(nuevoPedido(leer,almacenController) + "\n");
-                    break;
-                case 8:
+                case 4:
                     System.out.println("""
                             -------------------------------------
                                 Mostrar información del almacén
                             -------------------------------------""");
                     System.out.println(almacenController.toString() + "\n");
                     break;
-                case 9:
+            case 3:
+                System.out.println("""
+                        -------------------------------------
+                                 Pedidos por proveedor
+                        -------------------------------------""");
+                System.out.println(getPedidosByProveedor(leer, almacenController));
+                break;
+        }
+    }
+
+    private static void subMenuPiezas(Scanner leer, AlmacenController almacenController) {
+        int op;
+        System.out.println("""
+                -------------------------------------
+                               Piezas
+                -------------------------------------""");
+        System.out.println("""
+                Elija una opción:
+                1: Nueva pieza
+                2: Editar pieza
+                3: Ver piezas
+                4: Eliminar pieza""");
+        op = leer.nextInt();
+        leer.nextLine();
+        switch (op) {
+            case 1:
                     System.out.println("""
                             -------------------------------------
-                                      Pedidos por pieza
+                                         Nueva pieza
                             -------------------------------------""");
-                    System.out.println(getPedidosByPieza(leer,almacenController));
+                if (nuevaPieza(leer, almacenController))
+                        System.out.println("Operación realizada\n");
+                    else
+                        System.out.println("No se pudo realizar la operación\n");
                     break;
-                case 10:
+            case 2:
                     System.out.println("""
                             -------------------------------------
-                                     Pedidos por proveedor
+                                        Editar pieza
                             -------------------------------------""");
-                    System.out.println(getPedidosByProveedor(leer,almacenController));
+                if (modificarPrecioPieza(leer, almacenController))
+                        System.out.println("Operación realizada\n");
+                    else
+                        System.out.println("No se pudo realizar la operación\n");
                     break;
-                case 11:
+            case 4:
                     System.out.println("""
                             -------------------------------------
-                                       Sesión cerrada
+                                      Eliminar pieza
                             -------------------------------------""");
+                if (borrarPieza(leer, almacenController))
+                        System.out.println("Operación realizada\n");
+                    else
+                        System.out.println("No se pudo realizar la operación\n");
                     break;
-                default:
-                    System.out.println("Opción incorrecta\n");
+            case 3:
+                    System.out.println("""
+                            -------------------------------------
+                                         Ver piezas
+                            -------------------------------------""");
+                System.out.println(almacenController.verPiezas().toString());
                     break;
             }
-        } while (op != 11);
     }
 
     private static String getPedidosByProveedor(Scanner leer, AlmacenController almacenController) {
@@ -304,5 +316,60 @@ public class Main {
         System.out.println("Ingrese provincia");
         String provincia = leer.nextLine();
         return almacenController.nuevoProveedor(cif,nombre,direccion,localidad,provincia);
+    }
+
+    private static void subMenuProveedor(Scanner leer, AlmacenController almacenController) {
+        int op;
+        System.out.println("""
+                -------------------------------------
+                             Proveedores
+                -------------------------------------""");
+        System.out.println("""
+                Elija una opción:
+                1: Nuevo proveedor
+                2: Editar proveedor
+                3: Ver proveedores
+                4: Eliminar proveedor""");
+        op = leer.nextInt();
+        leer.nextLine();
+        switch (op) {
+            case 1:
+                System.out.println("""
+                        -------------------------------------
+                                   Nuevo proveedor
+                        -------------------------------------""");
+                if (nuevoProveedor(leer, almacenController))
+                    System.out.println("Operación realizada\n");
+                else
+                    System.out.println("No se pudo realizar la operación\n");
+                break;
+            case 2:
+                System.out.println("""
+                        -------------------------------------
+                                  Editar proveedor
+                        -------------------------------------""");
+                if (modificarDatosProveedor(leer, almacenController))
+                    System.out.println("Operación realizada\n");
+                else
+                    System.out.println("No se pudo realizar la operación\n");
+                break;
+            case 4:
+                System.out.println("""
+                        -------------------------------------
+                                  Eliminar proveedor
+                        -------------------------------------""");
+                if (borrarProveedor(leer, almacenController))
+                    System.out.println("Operación realizada\n");
+                else
+                    System.out.println("No se pudo realizar la operación\n");
+                break;
+            case 3:
+                System.out.println("""
+                        -------------------------------------
+                                   Ver proveedores
+                        -------------------------------------""");
+                System.out.println(almacenController.verProveedores().toString());
+                break;
+        }
     }
 }

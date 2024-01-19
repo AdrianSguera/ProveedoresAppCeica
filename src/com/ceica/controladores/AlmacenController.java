@@ -6,7 +6,6 @@ import com.ceica.modelos.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public class AlmacenController {
     private List<Proveedor> proveedorList;
@@ -203,4 +202,11 @@ public class AlmacenController {
                 .orElse("No hay pedidos de ese proveedor\n");
     }
 
+    public List<Proveedor> verProveedores() {
+        return proveedorList;
+    }
+
+    public List<Pieza> verPiezas() {
+        return piezaList;
+    }
 }
