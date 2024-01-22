@@ -11,16 +11,16 @@ public class AlmacenController {
     private List<Proveedor> proveedorList;
     private List<Pieza> piezaList;
     private List<Pedido> pedidoList;
-    private final List<Categoria> categorias;
+    private List<Categoria> categoriaList;
 
     public AlmacenController() {
         this.proveedorList = new ArrayList<>();
         this.piezaList = new ArrayList<>();
         this.pedidoList = new ArrayList<>();
-        this.categorias = new ArrayList<>();
-        categorias.add(new Categoria(1, "Pequeño"));
-        categorias.add(new Categoria(2, "Mediano"));
-        categorias.add(new Categoria(3, "Grande"));
+        this.categoriaList = new ArrayList<>();
+        categoriaList.add(new Categoria(1, "Pequeño"));
+        categoriaList.add(new Categoria(2, "Mediano"));
+        categoriaList.add(new Categoria(3, "Grande"));
     }
 
     @Override
@@ -142,16 +142,12 @@ public class AlmacenController {
     }
 
     public String nuevoPedido(int cantidad, String cif, int idpieza) {
-        if (existeCif(cif)) {
-            if (existeId(idpieza)) {
-                Pedido pedido = new Pedido(getProveedorByCif(cif), getPiezaById(idpieza));
-                pedido.setProveedor(getProveedorByCif(cif));
-                pedido.setPieza(getPiezaById(idpieza));
-                pedido.setCantidad(cantidad);
-                pedido.setFecha(LocalDate.now());
-                pedidoList.add(pedido);
-            } else return "No existe pieza";
-        } else return "No existe el proveedor";
+        Pedido pedido = new Pedido(getProveedorByCif(cif), getPiezaById(idpieza));
+        pedido.setProveedor(getProveedorByCif(cif));
+        pedido.setPieza(getPiezaById(idpieza));
+        pedido.setCantidad(cantidad);
+        pedido.setFecha(LocalDate.now());
+        pedidoList.add(pedido);
         return "Operación realizada";
     }
 
@@ -182,7 +178,7 @@ public class AlmacenController {
     }
 
     private Categoria getCategoriaById(int id) {
-        return categorias.stream()
+        return categoriaList.stream()
                 .filter(categoria -> categoria.getId() == id)
                 .findFirst().get();
     }
@@ -190,16 +186,12 @@ public class AlmacenController {
     public String getPedidosByPieza(int id) {
         return pedidoList.stream()
                 .filter(pedido -> pedido.getPieza().getId() == id)
-                .toList().stream().findFirst()
-                .map(Object::toString)
-                .orElse("No hay pedidos de esa pieza\n");
+                .toList().toString();
     }
     public String getPedidosByProveedor(String cif) {
         return pedidoList.stream()
                 .filter(pedido -> cif.equals(pedido.getProveedor().getCif()))
-                .toList().stream().findFirst()
-                .map(Object::toString)
-                .orElse("No hay pedidos de ese proveedor\n");
+                .toList().toString();
     }
 
     public List<Proveedor> verProveedores() {
@@ -208,5 +200,13 @@ public class AlmacenController {
 
     public List<Pieza> verPiezas() {
         return piezaList;
+    }
+    public String mostrarCategorias(){
+        return categoriaList.toString();
+    }
+
+    public boolean categoriaExiste(int idcategoria) {
+        return categoriaList.stream()
+                .anyMatch(categoria -> idcategoria == categoria.getId());
     }
 }
