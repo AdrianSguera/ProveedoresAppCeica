@@ -1,5 +1,11 @@
 package com.ceica.modelos;
 
+import com.ceica.bbdd.Conexion;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Pieza {
     private static int idPieza = 0;
     private int id;
@@ -56,6 +62,104 @@ public class Pieza {
 
     public void setPrecio(Double precio) {
         this.precio = precio;
+    }
+    public static List<Pieza> getPiezasBD(){
+        List<Pieza> piezaList = new ArrayList<>();
+        Connection connection = Conexion.conectar();
+        String consulta = "select * from piezas inner join categorias on categorias.id=piezas.idcategoria";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(consulta);
+            while (resultSet.next()) {
+                Pieza pieza = new Pieza();
+                Categoria categoria = new Categoria();
+                pieza.setId(resultSet.getInt("id"));
+                pieza.setNombre(resultSet.getString("nombre"));
+                pieza.setColor(resultSet.getString("color"));
+                pieza.setPrecio(resultSet.getDouble("precio"));
+                categoria.setId(resultSet.getInt("idcategoria"));
+                categoria.setNombre(resultSet.getString(7));
+                pieza.setCategoria(categoria);
+                piezaList.add(pieza);
+            }
+        } catch (SQLException e) {
+            try {
+                connection.close();
+            } catch (SQLException ignored) {
+            }
+            return piezaList;
+        }
+        try {
+            connection.close();
+        } catch (SQLException ignored) {
+        }
+        return  piezaList;
+    }
+
+    public static boolean insertar(Pieza pieza, int idcategoria) {
+        Connection connection = Conexion.conectar();
+        String consulta = "insert into piezas (nombre,color,precio,idcategoria) values (?,?,?,?)";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(consulta);
+            preparedStatement.setString(1, pieza.getNombre());
+            preparedStatement.setString(2, pieza.getColor());
+            preparedStatement.setDouble(3, pieza.getPrecio());
+            preparedStatement.setInt(4, idcategoria);
+            if (preparedStatement.executeUpdate() == 1) {
+                connection.close();
+                return true;
+            } else {
+                connection.close();
+                return false;
+            }
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    public static boolean eliminar(Pieza pieza) {
+        Connection connection = Conexion.conectar();
+        String consulta = "DELETE FROM piezas WHERE id = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(consulta);
+            preparedStatement.setInt(1, pieza.getId());
+            if (preparedStatement.executeUpdate() == 1) {
+                connection.close();
+                return true;
+            } else {
+                connection.close();
+                return false;
+            }
+        } catch (SQLException e) {
+            try {
+                connection.close();
+            } catch (SQLException ignored) {
+            }
+            return false;
+        }
+    }
+
+    public static boolean modificarPrecio(int id, Double dato) {
+        Connection connection = Conexion.conectar();
+        String consulta = "UPDATE piezas SET precio = ? WHERE id = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(consulta);
+            preparedStatement.setDouble(1, dato);
+            preparedStatement.setInt(2, id);
+            if (preparedStatement.executeUpdate() == 1) {
+                connection.close();
+                return true;
+            } else {
+                connection.close();
+                return false;
+            }
+        } catch (SQLException e) {
+            try {
+                connection.close();
+            } catch (SQLException ignored) {
+            }
+            return false;
+        }
     }
 
     @Override

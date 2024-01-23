@@ -18,9 +18,10 @@ public class AlmacenController {
         this.piezaList = new ArrayList<>();
         this.pedidoList = new ArrayList<>();
         this.categoriaList = new ArrayList<>();
-        categoriaList.add(new Categoria(1, "Pequeño"));
-        categoriaList.add(new Categoria(2, "Mediano"));
-        categoriaList.add(new Categoria(3, "Grande"));
+        proveedorList = Proveedor.getProveedoresBD();
+        piezaList = Pieza.getPiezasBD();
+        pedidoList = Pedido.getPedidosBD();
+        categoriaList = Categoria.getCategoriasBD();
     }
 
     @Override
@@ -28,7 +29,8 @@ public class AlmacenController {
         return "AlmacenController\n{" +
                 "proveedorList=" + proveedorList + "\n" +
                 "piezaList=" + piezaList + "\n" +
-                "pedidoList=" + pedidoList +
+                "pedidoList=" + pedidoList + "\n" +
+                "categoriaList=" + categoriaList +
                 '}';
     }
 
@@ -37,11 +39,19 @@ public class AlmacenController {
         proveedor.setDireccion(direccion);
         proveedor.setLocalidad(localidad);
         proveedor.setProvincia(provincia);
-        return proveedorList.add(proveedor);
+        if (Proveedor.insertar(proveedor)) {
+            proveedorList = Proveedor.getProveedoresBD();
+            return true;
+        } else
+            return false;
     }
 
     public boolean borrarProveedor(String cif) {
-        return proveedorList.removeIf(proveedor -> cif.equals(proveedor.getCif()));
+        if (Proveedor.eliminar(getProveedorByCif(cif))) {
+            proveedorList = Proveedor.getProveedoresBD();
+            return true;
+        } else
+            return false;
     }
 
     private static LocalDate obtenerFecha(String fecha) {
@@ -52,57 +62,53 @@ public class AlmacenController {
     }
 
     public boolean modificarNombreProveedor(String cif, String dato) {
-        return proveedorList.stream()
-                .filter(proveedor -> cif.equals(proveedor.getCif()))
-                .findFirst()
-                .map(proveedor -> {
-                    proveedor.setNombre(dato);
-                    return true;
-                })
-                .orElse(false);
+        if (Proveedor.modificarNombre(cif, dato)) {
+            proveedorList = Proveedor.getProveedoresBD();
+            return true;
+        } else
+            return false;
     }
 
     public boolean modificarDireccionProveedor(String cif, String dato) {
-        return proveedorList.stream()
-                .filter(proveedor -> cif.equals(proveedor.getDireccion()))
-                .findFirst()
-                .map(proveedor -> {
-                    proveedor.setDireccion(dato);
-                    return true;
-                })
-                .orElse(false);
+        if (Proveedor.modificarDireccion(cif, dato)) {
+            proveedorList = Proveedor.getProveedoresBD();
+            return true;
+        } else
+            return false;
     }
 
     public boolean modificarLocalidadProveedor(String cif, String dato) {
-        return proveedorList.stream()
-                .filter(proveedor -> cif.equals(proveedor.getLocalidad()))
-                .findFirst()
-                .map(proveedor -> {
-                    proveedor.setLocalidad(dato);
-                    return true;
-                })
-                .orElse(false);
+        if (Proveedor.modificarLocalidad(cif, dato)) {
+            proveedorList = Proveedor.getProveedoresBD();
+            return true;
+        } else
+            return false;
     }
 
     public boolean modificarProvinciaProveedor(String cif, String dato) {
-        return proveedorList.stream()
-                .filter(proveedor -> cif.equals(proveedor.getProvincia()))
-                .findFirst()
-                .map(proveedor -> {
-                    proveedor.setProvincia(dato);
-                    return true;
-                })
-                .orElse(false);
+        if (Proveedor.modificarProvincia(cif, dato)) {
+            proveedorList = Proveedor.getProveedoresBD();
+            return true;
+        } else
+            return false;
     }
 
     public boolean nuevaPieza(String nombre, Color color, Double precio, int idcategoria) {
         Pieza pieza = new Pieza(nombre, color, precio);
         pieza.setCategoria(getCategoriaById(idcategoria));
-        return piezaList.add(pieza);
+        if (Pieza.insertar(pieza, idcategoria)) {
+            piezaList = Pieza.getPiezasBD();
+            return true;
+        } else
+            return false;
     }
 
     public boolean borrarPieza(int id) {
-        return piezaList.removeIf(pieza -> id == pieza.getId());
+        if (Pieza.eliminar(getPiezaById(id))) {
+            piezaList = Pieza.getPiezasBD();
+            return true;
+        } else
+            return false;
     }
 
     public boolean modificarNombrePieza(int id, String dato) {
@@ -124,12 +130,11 @@ public class AlmacenController {
     }
 
     public boolean modificarPrecioPieza(int id, Double dato) {
-        for (Pieza pieza : piezaList)
-            if (id == pieza.getId()) {
-                pieza.setPrecio(dato);
-                return true;
-            }
-        return false;
+        if (Pieza.modificarPrecio(id, dato)) {
+            piezaList = Pieza.getPiezasBD();
+            return true;
+        } else
+            return false;
     }
 
     public boolean modificarCategoriaPieza(int id) {
@@ -142,13 +147,12 @@ public class AlmacenController {
     }
 
     public String nuevoPedido(int cantidad, String cif, int idpieza) {
-        Pedido pedido = new Pedido(getProveedorByCif(cif), getPiezaById(idpieza));
-        pedido.setProveedor(getProveedorByCif(cif));
-        pedido.setPieza(getPiezaById(idpieza));
-        pedido.setCantidad(cantidad);
-        pedido.setFecha(LocalDate.now());
-        pedidoList.add(pedido);
-        return "Operación realizada";
+        int idproveedor = getProveedorByCif(cif).getId();
+        if (Pedido.insertar(cantidad,idproveedor,idpieza)) {
+            pedidoList = Pedido.getPedidosBD();
+            return "Operación realizada";
+        } else
+            return "No se pudo realizar la operación";
     }
 
     public boolean existeCif(String cif) {
