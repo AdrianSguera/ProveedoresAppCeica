@@ -82,18 +82,15 @@ public class Pieza {
                 pieza.setCategoria(categoria);
                 piezaList.add(pieza);
             }
+            return piezaList;
         } catch (SQLException e) {
+            return piezaList;
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ignored) {
             }
-            return piezaList;
         }
-        try {
-            connection.close();
-        } catch (SQLException ignored) {
-        }
-        return  piezaList;
     }
 
     public static boolean insertar(Pieza pieza, int idcategoria) {
@@ -105,15 +102,14 @@ public class Pieza {
             preparedStatement.setString(2, pieza.getColor());
             preparedStatement.setDouble(3, pieza.getPrecio());
             preparedStatement.setInt(4, idcategoria);
-            if (preparedStatement.executeUpdate() == 1) {
-                connection.close();
-                return true;
-            } else {
-                connection.close();
-                return false;
-            }
+            return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
             return false;
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException ignored) {
+            }
         }
     }
 
@@ -123,19 +119,14 @@ public class Pieza {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(consulta);
             preparedStatement.setInt(1, pieza.getId());
-            if (preparedStatement.executeUpdate() == 1) {
-                connection.close();
-                return true;
-            } else {
-                connection.close();
-                return false;
-            }
+            return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
+            return false;
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ignored) {
             }
-            return false;
         }
     }
 
@@ -146,19 +137,14 @@ public class Pieza {
             PreparedStatement preparedStatement = connection.prepareStatement(consulta);
             preparedStatement.setDouble(1, dato);
             preparedStatement.setInt(2, id);
-            if (preparedStatement.executeUpdate() == 1) {
-                connection.close();
-                return true;
-            } else {
-                connection.close();
-                return false;
-            }
+            return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
+            return false;
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ignored) {
             }
-            return false;
         }
     }
 

@@ -51,10 +51,16 @@ public class Categoria {
                 categoria.setNombre(resultSet.getString("nombre"));
                 categoriaList.add(categoria);
             }
+            return categoriaList;
         } catch (SQLException e) {
             return categoriaList;
         }
-        return categoriaList;
+        finally {
+            try {
+                connection.close();
+            } catch (SQLException ignored) {
+            }
+        }
     }
     @Override
     public String toString() {

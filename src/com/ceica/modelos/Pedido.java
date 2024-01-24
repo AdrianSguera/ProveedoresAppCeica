@@ -99,18 +99,15 @@ public class Pedido {
                 categoria.setNombre(resultSet.getString(17));
                 pedidoList.add(pedido);
             }
+            return pedidoList;
         } catch (SQLException e) {
+            return pedidoList;
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ignored) {
             }
-            return pedidoList;
         }
-        try {
-            connection.close();
-        } catch (SQLException ignored) {
-        }
-        return pedidoList;
     }
 
     public static boolean insertar(int cantidad, int idproveedor, int idpieza) {
@@ -121,15 +118,14 @@ public class Pedido {
             preparedStatement.setInt(1, idpieza);
             preparedStatement.setInt(2, idproveedor);
             preparedStatement.setInt(3, cantidad);
-            if (preparedStatement.executeUpdate() == 1) {
-                connection.close();
-                return true;
-            } else {
-                connection.close();
-                return false;
-            }
+            return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
             return false;
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException ignored) {
+            }
         }
     }
 

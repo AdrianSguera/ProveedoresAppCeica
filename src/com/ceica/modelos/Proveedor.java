@@ -86,18 +86,15 @@ public class Proveedor {
                 proveedor.setProvincia(resultSet.getString("provincia"));
                 proveedorList.add(proveedor);
             }
+            return proveedorList;
         } catch (SQLException e) {
+            return proveedorList;
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ignored) {
             }
-            return proveedorList;
         }
-        try {
-            connection.close();
-        } catch (SQLException ignored) {
-        }
-        return proveedorList;
     }
 
     public static boolean insertar(Proveedor proveedor) {
@@ -110,19 +107,14 @@ public class Proveedor {
             preparedStatement.setString(3, proveedor.getDireccion());
             preparedStatement.setString(4, proveedor.getLocalidad());
             preparedStatement.setString(5, proveedor.getProvincia());
-            if (preparedStatement.executeUpdate() == 1) {
-                connection.close();
-                return true;
-            } else {
-                connection.close();
-                return false;
-            }
+            return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
+            return false;
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ignored) {
             }
-            return false;
         }
     }
 
@@ -132,19 +124,14 @@ public class Proveedor {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(consulta);
             preparedStatement.setInt(1, proveedor.getId());
-            if (preparedStatement.executeUpdate() == 1) {
-                connection.close();
-                return true;
-            } else {
-                connection.close();
-                return false;
-            }
+            return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
+            return false;
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ignored) {
             }
-            return false;
         }
     }
 
@@ -155,19 +142,14 @@ public class Proveedor {
             PreparedStatement preparedStatement = connection.prepareStatement(consulta);
             preparedStatement.setString(1, dato);
             preparedStatement.setString(2, cif);
-            if (preparedStatement.executeUpdate() == 1) {
-                connection.close();
-                return true;
-            } else {
-                connection.close();
-                return false;
-            }
+            return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
+            return false;
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ignored) {
             }
-            return false;
         }
     }
 
@@ -178,19 +160,14 @@ public class Proveedor {
             PreparedStatement preparedStatement = connection.prepareStatement(consulta);
             preparedStatement.setString(1, dato);
             preparedStatement.setString(2, cif);
-            if (preparedStatement.executeUpdate() == 1) {
-                connection.close();
-                return true;
-            } else {
-                connection.close();
-                return false;
-            }
+            return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
+            return false;
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ignored) {
             }
-            return false;
         }
     }
 
@@ -201,19 +178,14 @@ public class Proveedor {
             PreparedStatement preparedStatement = connection.prepareStatement(consulta);
             preparedStatement.setString(1, dato);
             preparedStatement.setString(2, cif);
-            if (preparedStatement.executeUpdate() == 1) {
-                connection.close();
-                return true;
-            } else {
-                connection.close();
-                return false;
-            }
+            return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
+            return false;
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ignored) {
             }
-            return false;
         }
     }
 
@@ -224,19 +196,14 @@ public class Proveedor {
             PreparedStatement preparedStatement = connection.prepareStatement(consulta);
             preparedStatement.setString(1, dato);
             preparedStatement.setString(2, cif);
-            if (preparedStatement.executeUpdate() == 1) {
-                connection.close();
-                return true;
-            } else {
-                connection.close();
-                return false;
-            }
+            return preparedStatement.executeUpdate() == 1;
         } catch (SQLException e) {
+            return false;
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ignored) {
             }
-            return false;
         }
     }
 
