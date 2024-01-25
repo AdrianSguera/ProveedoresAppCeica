@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pieza {
+public class Pieza extends ModeloBase{
     private static int idPieza = 0;
     private int id;
     private String nombre, color;
@@ -93,61 +93,6 @@ public class Pieza {
         }
     }
 
-    public static boolean insertar(Pieza pieza, int idcategoria) {
-        Connection connection = Conexion.conectar();
-        String consulta = "insert into piezas (nombre,color,precio,idcategoria) values (?,?,?,?)";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(consulta);
-            preparedStatement.setString(1, pieza.getNombre());
-            preparedStatement.setString(2, pieza.getColor());
-            preparedStatement.setDouble(3, pieza.getPrecio());
-            preparedStatement.setInt(4, idcategoria);
-            return preparedStatement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            return false;
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            }
-        }
-    }
-
-    public static boolean eliminar(Pieza pieza) {
-        Connection connection = Conexion.conectar();
-        String consulta = "DELETE FROM piezas WHERE id = ?";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(consulta);
-            preparedStatement.setInt(1, pieza.getId());
-            return preparedStatement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            return false;
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            }
-        }
-    }
-
-    public static boolean modificarPrecio(int id, Double dato) {
-        Connection connection = Conexion.conectar();
-        String consulta = "UPDATE piezas SET precio = ? WHERE id = ?";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(consulta);
-            preparedStatement.setDouble(1, dato);
-            preparedStatement.setInt(2, id);
-            return preparedStatement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            return false;
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            }
-        }
-    }
-
     @Override
     public String toString() {
         return "\nPieza{" +
@@ -157,5 +102,10 @@ public class Pieza {
                 ", Categoría='" + categoria + '\'' +
                 ", Precio=" + precio +
                 '}';
+    }
+
+    @Override
+    protected String getNombreTabla() {
+        return "piezas";
     }
 }

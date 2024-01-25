@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pedido {
+public class Pedido extends ModeloBase{
     private static int idPedido = 0;
     private int id, cantidad;
     private Proveedor proveedor;
@@ -110,25 +110,6 @@ public class Pedido {
         }
     }
 
-    public static boolean insertar(int cantidad, int idproveedor, int idpieza) {
-        Connection connection = Conexion.conectar();
-        String consulta = "insert into suministros (idpieza,idproveedor,cantidad) values (?,?,?)";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(consulta);
-            preparedStatement.setInt(1, idpieza);
-            preparedStatement.setInt(2, idproveedor);
-            preparedStatement.setInt(3, cantidad);
-            return preparedStatement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            return false;
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            }
-        }
-    }
-
     @Override
     public String toString() {
         return "\nPedido{" +
@@ -138,5 +119,10 @@ public class Pedido {
                 ", Pieza=" + pieza +
                 ", Fecha=" + fecha +
                 '}';
+    }
+
+    @Override
+    protected String getNombreTabla() {
+        return "suministros";
     }
 }

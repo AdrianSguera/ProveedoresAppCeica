@@ -1,12 +1,10 @@
 package com.ceica.modelos;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public abstract class ModeloBase {
@@ -25,49 +23,57 @@ public abstract class ModeloBase {
             propiedades.load(entrada);
             URL = propiedades.getProperty("db.url");
             USUARIO = propiedades.getProperty("db.usuario");
-            PASSWORD = propiedades.getProperty("db.contraseña");
+            PASSWORD = propiedades.getProperty("db.pass");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Método abstracto para obtener el nombre de la tabla
     protected abstract String getNombreTabla();
 
-    // Métodos para CRUD
-
-    protected void insertar(String sql, Object... parametros) {
-        ejecutarQuery(sql, parametros);
+    public boolean insertar(String consulta, Object... parametros) {
+        consulta = "insert into " + getNombreTabla() + " " + consulta;
+        return ejecutarQuery(consulta, parametros);
     }
 
-    protected void actualizar(String sql, Object... parametros) {
-        ejecutarQuery(sql, parametros);
+    public boolean modificar(String consulta, Object... parametros) {
+        consulta = "update " + getNombreTabla() + " set " + consulta;
+        return ejecutarQuery(consulta, parametros);
     }
 
-    protected void borrar(String sql, Object... parametros) {
-        ejecutarQuery(sql, parametros);
+    public boolean eliminar(String consulta, Object... parametros) {
+        consulta = "delete from " + getNombreTabla() + " where " + consulta;
+        return ejecutarQuery(consulta, parametros);
     }
 
-    // Método para leer datos de la base de datos
-    protected void leer(String sql, Object... parametros) {
-        // Implementa la lógica para leer datos
-    }
-
-    // Método genérico para ejecutar consultas SQL
-    private void ejecutarQuery(String sql, Object... parametros) {
-        try (Connection conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
-             PreparedStatement preparedStatement = conexion.prepareStatement(sql)) {
-
-            // Establecer los valores de los parámetros
-            for (int i = 0; i < parametros.length; i++) {
-                preparedStatement.setObject(i + 1, parametros[i]);
+    protected List<Object> leerTodos() {
+        List<Object> objectList = new ArrayList<>();
+        String sql = "SELECT * FROM " + getNombreTabla();
+        try (Connection connection = DriverManager.getConnection(URL, USUARIO, PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            while (resultSet.next()){
+                Object[] objects = new Object[metaData.getColumnCount()];
+                for (int i = 0; i < metaData.getColumnCount(); i++) {
+                    objects[i] = resultSet.getObject(i+1);
+                }
+                objectList.add(objects);
             }
-
-            // Ejecutar la consulta
-            preparedStatement.executeUpdate();
-
+            return objectList;
         } catch (SQLException e) {
-            e.printStackTrace();
+            return objectList;
+        }
+    }
+
+    private boolean ejecutarQuery(String sql, Object... parametros) {
+        try (Connection connection = DriverManager.getConnection(URL, USUARIO, PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            for (int i = 0; i < parametros.length; i++)
+                preparedStatement.setObject(i + 1, parametros[i]);
+            return preparedStatement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            return false;
         }
     }
 }

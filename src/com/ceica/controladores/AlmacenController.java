@@ -35,11 +35,7 @@ public class AlmacenController {
     }
 
     public boolean nuevoProveedor(String cif, String nombre, String direccion, String localidad, String provincia){
-        Proveedor proveedor = new Proveedor(nombre, cif);
-        proveedor.setDireccion(direccion);
-        proveedor.setLocalidad(localidad);
-        proveedor.setProvincia(provincia);
-        if (Proveedor.insertar(proveedor)) {
+        if (new Proveedor().insertar("(cif,nombre,direccion,localidad,provincia) values (?,?,?,?,?)", cif, nombre, direccion, localidad, provincia)) {
             proveedorList = Proveedor.getProveedoresBD();
             return true;
         } else
@@ -47,7 +43,7 @@ public class AlmacenController {
     }
 
     public boolean borrarProveedor(String cif) {
-        if (Proveedor.eliminar(getProveedorByCif(cif))) {
+        if (new Proveedor().eliminar("cif=?", cif)) {
             proveedorList = Proveedor.getProveedoresBD();
             return true;
         } else
@@ -62,7 +58,7 @@ public class AlmacenController {
     }
 
     public boolean modificarNombreProveedor(String cif, String dato) {
-        if (Proveedor.modificarNombre(cif, dato)) {
+        if (new Proveedor().modificar("nombre = ? WHERE cif = ?", dato, cif)) {
             proveedorList = Proveedor.getProveedoresBD();
             return true;
         } else
@@ -70,7 +66,7 @@ public class AlmacenController {
     }
 
     public boolean modificarDireccionProveedor(String cif, String dato) {
-        if (Proveedor.modificarDireccion(cif, dato)) {
+        if (new Proveedor().modificar("direccion = ? WHERE cif = ?", dato, cif)) {
             proveedorList = Proveedor.getProveedoresBD();
             return true;
         } else
@@ -78,7 +74,7 @@ public class AlmacenController {
     }
 
     public boolean modificarLocalidadProveedor(String cif, String dato) {
-        if (Proveedor.modificarLocalidad(cif, dato)) {
+        if (new Proveedor().modificar("localidad = ? WHERE cif = ?", dato, cif)) {
             proveedorList = Proveedor.getProveedoresBD();
             return true;
         } else
@@ -86,7 +82,7 @@ public class AlmacenController {
     }
 
     public boolean modificarProvinciaProveedor(String cif, String dato) {
-        if (Proveedor.modificarProvincia(cif, dato)) {
+        if (new Proveedor().modificar("provincia = ? WHERE cif = ?", dato, cif)) {
             proveedorList = Proveedor.getProveedoresBD();
             return true;
         } else
@@ -94,9 +90,7 @@ public class AlmacenController {
     }
 
     public boolean nuevaPieza(String nombre, Color color, Double precio, int idcategoria) {
-        Pieza pieza = new Pieza(nombre, color, precio);
-        pieza.setCategoria(getCategoriaById(idcategoria));
-        if (Pieza.insertar(pieza, idcategoria)) {
+        if (new Pieza().insertar("(nombre,color,precio,idcategoria) values (?,?,?,?)", nombre, color, precio, idcategoria)) {
             piezaList = Pieza.getPiezasBD();
             return true;
         } else
@@ -104,69 +98,36 @@ public class AlmacenController {
     }
 
     public boolean borrarPieza(int id) {
-        if (Pieza.eliminar(getPiezaById(id))) {
+        if (new Pieza().eliminar("id = ?", id)) {
             piezaList = Pieza.getPiezasBD();
             return true;
         } else
             return false;
-    }
-
-    public boolean modificarNombrePieza(int id, String dato) {
-        for (Pieza pieza : piezaList)
-            if (id == pieza.getId()) {
-                pieza.setNombre(dato);
-                return true;
-            }
-        return false;
-    }
-
-    public boolean modificarColorPieza(int id, String dato) {
-        for (Pieza pieza : piezaList)
-            if (id == pieza.getId()) {
-                pieza.setColor(dato);
-                return true;
-            }
-        return false;
     }
 
     public boolean modificarPrecioPieza(int id, Double dato) {
-        if (Pieza.modificarPrecio(id, dato)) {
+        if (new Pieza().modificar("precio = ? WHERE id = ?", dato, id)) {
             piezaList = Pieza.getPiezasBD();
             return true;
         } else
             return false;
     }
 
-    public boolean modificarCategoriaPieza(int id) {
-        for (Pieza pieza : piezaList)
-            if (id == pieza.getId()) {
-                pieza.setCategoria(getCategoriaById(id));
-                return true;
-            }
-        return false;
-    }
-
     public String nuevoPedido(int cantidad, String cif, int idpieza) {
-        int idproveedor = getProveedorByCif(cif).getId();
-        if (Pedido.insertar(cantidad,idproveedor,idpieza)) {
-            pedidoList = Pedido.getPedidosBD();
+        Proveedor proveedor = getProveedorByCif(cif);
+        if (new Pedido().insertar("(idpieza,idproveedor,cantidad) values (?,?,?)", idpieza, proveedor.getId(), cantidad)) {
+            piezaList = Pieza.getPiezasBD();
             return "Operación realizada";
         } else
             return "No se pudo realizar la operación";
     }
 
     public boolean existeCif(String cif) {
-        for (Proveedor proveedor : proveedorList)
-            if (cif.equals(proveedor.getCif()))
-                return true;
-        return false;
+        return proveedorList.stream().anyMatch(proveedor -> cif.equals(proveedor.getCif()));
     }
 
     public boolean existeId(int id) {
-        for (Pieza pieza : piezaList)
-            if (id == pieza.getId())
-                return true;
-        return false;
+        return piezaList.stream().anyMatch(pieza -> id == pieza.getId());
     }
 
     private Pieza getPiezaById(int id) {

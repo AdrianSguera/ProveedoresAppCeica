@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Categoria {
+public class Categoria extends ModeloBase {
     private int id;
     private String nombre;
 
@@ -65,5 +65,10 @@ public class Categoria {
     @Override
     public String toString() {
         return id + " " + nombre + "\n";
+    }
+
+    @Override
+    protected String getNombreTabla() {
+        return "categorias";
     }
 }
