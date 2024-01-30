@@ -2,8 +2,12 @@ package com.ceica.modelos;
 
 import com.ceica.bbdd.Conexion;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,48 +70,39 @@ public class Pedido extends ModeloBase{
 
     public static List<Pedido> getPedidosBD() {
         List<Pedido> pedidoList = new ArrayList<>();
-        Connection connection = Conexion.conectar();
-        String consulta = """
-                select * from suministros
+        List<Object> objectList = new Pedido().leerTodos("""
                 inner join proveedores on proveedores.id=suministros.idproveedor
                 inner join piezas on piezas.id=suministros.idpieza
-                inner join categorias on piezas.idcategoria=categorias.id""";
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(consulta);
-            while (resultSet.next()) {
-                Pedido pedido = new Pedido();
-                Proveedor proveedor = new Proveedor();
-                Pieza pieza = new Pieza();
-                Categoria categoria = new Categoria();
-                pedido.setId(resultSet.getInt("id"));
-                pedido.setCantidad(resultSet.getInt("cantidad"));
-                pedido.setFecha(resultSet.getDate("fecha").toLocalDate());
-                pedido.setProveedor(proveedor);
-                pedido.setPieza(pieza);
-                proveedor.setId(resultSet.getInt("idproveedor"));
-                proveedor.setNombre(resultSet.getString("nombre"));
-                proveedor.setDireccion(resultSet.getString("direccion"));
-                proveedor.setLocalidad(resultSet.getString("localidad"));
-                proveedor.setProvincia(resultSet.getString("provincia"));
-                pieza.setId(resultSet.getInt("idpieza"));
-                pieza.setNombre(resultSet.getString(12));
-                pieza.setColor(resultSet.getString("color"));
-                pieza.setPrecio(resultSet.getDouble("precio"));
-                pieza.setCategoria(categoria);
-                categoria.setId(resultSet.getInt("idcategoria"));
-                categoria.setNombre(resultSet.getString(17));
-                pedidoList.add(pedido);
-            }
-            return pedidoList;
-        } catch (SQLException e) {
-            return pedidoList;
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            }
+                inner join categorias on piezas.idcategoria=categorias.id""");
+        for (Object obj : objectList) {
+            Object[] objects = (Object[]) obj;
+            Pieza pieza = new Pieza();
+            Categoria categoria = new Categoria();
+            Pedido pedido = new Pedido();
+            Proveedor proveedor = new Proveedor();
+            pedido.setId((int) objects[0]);
+            pedido.setCantidad((int) objects[3]);
+            LocalDateTime fecha = (LocalDateTime) objects[4];
+            LocalDate fechaLD = fecha.toLocalDate();
+            pedido.setFecha(fechaLD);
+            pieza.setId((int) objects[1]);
+            pieza.setNombre((String) objects[12]);
+            pieza.setColor((String) objects[13]);
+            pieza.setPrecio((Double) objects[14]);
+            categoria.setId((int) objects[15]);
+            categoria.setNombre((String) objects[17]);
+            pieza.setCategoria(categoria);
+            proveedor.setId((int) objects[2]);
+            proveedor.setCif((String) objects[6]);
+            proveedor.setNombre((String) objects[7]);
+            proveedor.setDireccion((String) objects[8]);
+            proveedor.setLocalidad((String) objects[9]);
+            proveedor.setProvincia((String) objects[10]);
+            pedido.setPieza(pieza);
+            pedido.setProveedor(proveedor);
+            pedidoList.add(pedido);
         }
+        return pedidoList;
     }
 
     @Override

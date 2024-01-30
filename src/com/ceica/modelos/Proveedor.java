@@ -73,13 +73,11 @@ public class Proveedor extends ModeloBase {
 
     public static List<Proveedor> getProveedoresBD() {
         List<Proveedor> proveedorList = new ArrayList<>();
-        Proveedor proveedor;
-        List<Object> objectList = new Proveedor().leerTodos(); // Cambio a List<Object>
-
+        List<Object> objectList = new Proveedor().leerTodos();
         for (Object obj : objectList) {
-            Object[] objects = (Object[]) obj; // Cast a Object[] ya que esperamos un arreglo
-            proveedor = new Proveedor(); // Crear un nuevo objeto Proveedor en cada iteración
-            proveedor.setId((int) objects[0]); // Acceder a los elementos del arreglo
+            Object[] objects = (Object[]) obj;
+            Proveedor proveedor = new Proveedor();
+            proveedor.setId((int) objects[0]);
             proveedor.setCif((String) objects[1]);
             proveedor.setNombre((String) objects[2]);
             proveedor.setDireccion((String) objects[3]);

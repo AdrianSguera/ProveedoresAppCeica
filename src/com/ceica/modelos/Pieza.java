@@ -1,7 +1,9 @@
 package com.ceica.modelos;
 
 import com.ceica.bbdd.Conexion;
+import com.ceica.controladores.AlmacenController;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,34 +65,24 @@ public class Pieza extends ModeloBase{
     public void setPrecio(Double precio) {
         this.precio = precio;
     }
-    public static List<Pieza> getPiezasBD(){
+
+    public static List<Pieza> getPiezasBD() {
         List<Pieza> piezaList = new ArrayList<>();
-        Connection connection = Conexion.conectar();
-        String consulta = "select * from piezas inner join categorias on categorias.id=piezas.idcategoria";
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(consulta);
-            while (resultSet.next()) {
-                Pieza pieza = new Pieza();
-                Categoria categoria = new Categoria();
-                pieza.setId(resultSet.getInt("id"));
-                pieza.setNombre(resultSet.getString("nombre"));
-                pieza.setColor(resultSet.getString("color"));
-                pieza.setPrecio(resultSet.getDouble("precio"));
-                categoria.setId(resultSet.getInt("idcategoria"));
-                categoria.setNombre(resultSet.getString(7));
-                pieza.setCategoria(categoria);
-                piezaList.add(pieza);
-            }
-            return piezaList;
-        } catch (SQLException e) {
-            return piezaList;
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            }
+        List<Object> objectList = new Pieza().leerTodos("inner join categorias on categorias.id=piezas.idcategoria");
+        for (Object obj : objectList) {
+            Object[] objects = (Object[]) obj;
+            Pieza pieza = new Pieza();
+            Categoria categoria = new Categoria();
+            pieza.setId((int) objects[0]);
+            pieza.setNombre((String) objects[1]);
+            pieza.setColor((String) objects[2]);
+            pieza.setPrecio((Double) objects[3]);
+            categoria.setId((int) objects[4]);
+            categoria.setNombre((String) objects[6]);
+            pieza.setCategoria(categoria);
+            piezaList.add(pieza);
         }
+        return piezaList;
     }
 
     @Override

@@ -38,30 +38,19 @@ public class Categoria extends ModeloBase {
         this.nombre = nombre;
     }
 
-    public static List<Categoria> getCategoriasBD(){
+    public static List<Categoria> getCategoriasBD() {
         List<Categoria> categoriaList = new ArrayList<>();
-        Connection connection = Conexion.conectar();
-        String consulta = "select * from categorias";
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(consulta);
-            while (resultSet.next()) {
-                Categoria categoria = new Categoria();
-                categoria.setId(resultSet.getInt("id"));
-                categoria.setNombre(resultSet.getString("nombre"));
-                categoriaList.add(categoria);
-            }
-            return categoriaList;
-        } catch (SQLException e) {
-            return categoriaList;
+        List<Object> objectList = new Categoria().leerTodos();
+        for (Object obj : objectList) {
+            Object[] objects = (Object[]) obj;
+            Categoria categoria = new Categoria();
+            categoria.setId((int) objects[0]);
+            categoria.setNombre((String) objects[1]);
+            categoriaList.add(categoria);
         }
-        finally {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            }
-        }
+        return categoriaList;
     }
+
     @Override
     public String toString() {
         return id + " " + nombre + "\n";

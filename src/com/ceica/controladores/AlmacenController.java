@@ -136,13 +136,13 @@ public class AlmacenController {
                 .findFirst().get();
     }
 
-    private Proveedor getProveedorByCif(String cif) {
+    public Proveedor getProveedorByCif(String cif) {
         return proveedorList.stream()
                 .filter(proveedor -> cif.equals(proveedor.getCif()))
                 .findFirst().get();
     }
 
-    private Categoria getCategoriaById(int id) {
+    public Categoria getCategoriaById(int id) {
         return categoriaList.stream()
                 .filter(categoria -> categoria.getId() == id)
                 .findFirst().get();

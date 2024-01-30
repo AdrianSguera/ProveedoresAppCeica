@@ -66,6 +66,26 @@ public abstract class ModeloBase {
         }
     }
 
+    protected List<Object> leerTodos(String consulta) {
+        List<Object> objectList = new ArrayList<>();
+        String sql = "SELECT * FROM " + getNombreTabla() + " " + consulta;
+        try (Connection connection = DriverManager.getConnection(URL, USUARIO, PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            while (resultSet.next()){
+                Object[] objects = new Object[metaData.getColumnCount()];
+                for (int i = 0; i < metaData.getColumnCount(); i++) {
+                    objects[i] = resultSet.getObject(i+1);
+                }
+                objectList.add(objects);
+            }
+            return objectList;
+        } catch (SQLException e) {
+            return objectList;
+        }
+    }
+
     private boolean ejecutarQuery(String sql, Object... parametros) {
         try (Connection connection = DriverManager.getConnection(URL, USUARIO, PASSWORD);
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
